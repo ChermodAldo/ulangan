@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>59</title>
+  <style>
+    html,body { height:100%; margin:0; font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; background:#0b1220; color:#e6eef8; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:0px 16px; background:linear-gradient(90deg,#0f1724,#071022); box-shadow:0 2px 8px rgba(0,0,0,.5); }
+    .title { font-weight:600; }
+    .controls { display:flex; gap:3px; }
+    button { padding:8px 12px; border-radius:8px; border:0; cursor:pointer; background:#0ea5a9; color:#022; font-weight:600; }
+    button.secondary { background:#334155; color:#dbeafe; }
+    #frameWrap { height:calc(100% - 58px); display:block; }
+    iframe { width:100%; height:100%; border:0; background:white; }
+    .fallback { display:none; height:100%; align-items:center; justify-content:center; gap:12px; flex-direction:column; padding:24px; text-align:center; color:#cbd5e1; }
+    .notice { font-size:14px; color:#94a3b8; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="title">Asesmen SMPN59 BERIMAN — Aldo</div>
+
+    <div class="controls">
+      <button id="openBtn">Buka di Tab Baru</button>
+      <button id="reloadBtn" class="secondary">Muat Ulang</button>
+
+      <button id="fsBtn">Fullscreen</button>
+    </div>
+  </div>
+
+  <div id="frameWrap">
+    <iframe id="siteFrame" src="https://asesmensmpn27teguh.sch.id/" title="Asesmen SMPN27 Teguh"></iframe>
+
+    <div id="fallback" class="fallback" style="display:none;">
+      <div style="max-width:720px">
+        <h2>Halaman tidak dapat dimuat di sini</h2>
+        <p class="notice">Beberapa situs melarang pemuatan lewat <code>iframe</code>.</p>
+        <div><button id="openBtn2">Buka Situs di Tab Baru</button></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.getElementById("fsBtn").onclick = function () {
+      const elem = document.documentElement;
+
+      if (!document.fullscreenElement &&
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.msFullscreenElement) {
+
+          if (elem.requestFullscreen) elem.requestFullscreen();
+          else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+          else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+          else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+
+      } else {
+
+          if (document.exitFullscreen) document.exitFullscreen();
+          else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
+  };
+</script>
+
+<script>
+    const iframe = document.getElementById('siteFrame');
+    const fallback = document.getElementById('fallback');
+    const frameWrap = document.getElementById('frameWrap');
+    const openBtn = document.getElementById('openBtn');
+    const openBtn2 = document.getElementById('openBtn2');
+    const reloadBtn = document.getElementById('reloadBtn');
+
+    const originalTargetURL = 'https://asesmensmpn27teguh.sch.id/';
+    const proxyBaseUrl = 'http://192.168.100.192:8080';
+
+    function loadIframeThroughProxy() {
+      iframe.src = proxyBaseUrl + encodeURIComponent(originalTargetURL) + '&_cachebuster=' + Date.now();
+      iframe.style.display = 'block';
+      fallback.style.display = 'none';
+    }
+
+    function openInNewTab() {
+      window.open(originalTargetURL, '_blank', 'noopener,noreferrer');
+    }
+    openBtn.addEventListener('click', openInNewTab);
+    openBtn2.addEventListener('click', openInNewTab);
+
+    reloadBtn.addEventListener('click', loadIframeThroughProxy);
+
+    window.addEventListener('load', () => {
+        loadIframeThroughProxy();
+    });
+
+    iframe.addEventListener('error', () => {
+        showFallback();
+    });
+
+    function showFallback() {
+      iframe.style.display = 'none';
+      fallback.style.display = 'flex';
+    }
+
+    setTimeout(() => {
+      if (!iframe.src.startsWith(proxyBaseUrl) || iframe.style.display === 'none') {
+        showFallback();
+      }
+    }, 5000);
+</script>
+
+</body>
+</html>
